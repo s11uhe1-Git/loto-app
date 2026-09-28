@@ -3,6 +3,20 @@ from loto import GAMES, export_csv, generate, read_csv, sample_csv, suggest_colu
 
 
 class LotoTests(unittest.TestCase):
+    def test_dotted_main_number_headers(self):
+        for game, (count, _) in GAMES.items():
+            columns = ["本数字"] + [f"本数字.{i}" for i in range(1, count)]
+            header = ["回号", "抽せん日", *columns, "ボーナス数字"]
+            data = (",".join(header) + "\n" + ",".join(
+                ["第2089回", "2026-04-02", *map(str, range(1, count + 1)), "15"])).encode("utf-8")
+            headers, rows = read_csv(data)
+            selected = suggest_columns(headers, count)
+            self.assertEqual(selected, columns)
+            draws = validate_draws(rows, selected, game)
+            self.assertEqual(draws, [tuple(range(1, count + 1))])
+            self.assertEqual(len(generate(draws, game, seed=42)), 5)
+            self.assertEqual(suggest_columns(headers, 7 if count == 6 else 6), [])
+
     def test_both_games_and_invariants(self):
         for game, (count, maximum) in GAMES.items():
             headers, rows = read_csv(sample_csv(game))

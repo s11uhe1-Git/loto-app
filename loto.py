@@ -42,6 +42,10 @@ def read_csv(data):
 
 
 def suggest_columns(headers, count):
+    # Exported sheets may suffix repeated 本数字 headers with .1, .2, ...
+    dotted = ["本数字"] + [f"本数字.{i}" for i in range(1, count)]
+    if all(name in headers for name in dotted) and f"本数字.{count}" not in headers:
+        return dotted
     for pattern in ("第{}数字", "本数字{}", "数字{}", "n{}"):
         names = [pattern.format(i) for i in range(1, count + 1)]
         if all(name in headers for name in names):

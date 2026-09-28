@@ -23,6 +23,7 @@ st.download_button("CSVの見本をダウンロード（架空データ）", sam
                    file_name=f"sample_loto{count}.csv", mime="text/csv")
 uploaded = st.file_uploader("当選履歴CSV（UTF-8 / CP932、5MBまで）", type=["csv"], disabled=demo)
 st.caption("ヘッダー付き・カンマ区切り。1行に1回分を記載し、ロト6とロト7は別ファイルにしてください。")
+st.caption("「回号・抽せん日・本数字・本数字.1〜.5・ボーナス数字」の形式に対応。本数字の6列を自動選択します（ロト7は本数字.6まで）。")
 if not demo and uploaded is None:
     st.stop()
 data = sample_csv(game) if demo else uploaded.getvalue()
